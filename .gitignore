@@ -1,0 +1,49 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment & secrets
+.env
+*.log
+
+# Database files
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploaded user files (keep .gitkeep)
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Python cache & virtual environment
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.pytest_cache/
+
+# AWS credentials and private keys
+*.pem
+*.key
+.aws/
+credentials

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Console – FindIt Lost & Found</title>
+  <meta name="description" content="Campus Administration interface for managing and moderating reported lost and found items.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container">
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="FindIt Campus">
+      </a>
+
+      <button id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <ul id="nav-menu" class="nav-menu">
+        <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+        <li><a href="{{ url_for('browse') }}" class="nav-link">Browse Items</a></li>
+        <li><a href="{{ url_for('report_lost') }}" class="nav-link">Report Lost</a></li>
+        <li><a href="{{ url_for('report_found') }}" class="nav-link">Report Found</a></li>
+      </ul>
+
+      <div id="nav-actions" class="nav-actions">
+        <a href="{{ url_for('dashboard') }}" class="user-menu-btn" title="View My Dashboard">
+          <span class="avatar">{{ current_user.name[0]|upper }}</span>
+          <span>{{ current_user.name.split(' ')[0] }}</span>
+        </a>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline btn-sm active" style="color: var(--secondary);" title="Admin Console">
+          <i class="fa-solid fa-shield-halved"></i> Admin
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline btn-sm">
+          <i class="fa-solid fa-gauge"></i> Dashboard
+        </a>
+        <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline" style="color: var(--lost-text);" title="Log out">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Message Toasts -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="toast-container" class="toast-container">
+        {% for category, message in messages %}
+          <div class="toast {{ 'error' if category == 'error' else 'success' }}">
+            <i class="fa-solid {{ 'fa-circle-exclamation' if category == 'error' else 'fa-circle-check' }}"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="main-content">
+    <div class="dashboard-layout">
+      <!-- Admin Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-user">
+          <div class="sidebar-avatar" style="background-color: var(--secondary);">{{ current_user.name[0]|upper }}</div>
+          <div>
+            <div class="sidebar-user-name">{{ current_user.name }}</div>
+            <div class="sidebar-user-role"><i class="fa-solid fa-shield-halved" style="color: var(--secondary);"></i> Administrator</div>
+          </div>
+        </div>
+
+        <ul class="sidebar-nav">
+          <li>
+            <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link active">
+              <i class="fa-solid fa-shield-halved"></i> Admin Console
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('browse') }}" class="sidebar-link">
+              <i class="fa-solid fa-compass"></i> Public Directory
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+              <i class="fa-solid fa-gauge"></i> Student View
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('report_lost') }}" class="sidebar-link">
+              <i class="fa-solid fa-circle-exclamation"></i> File Lost Report
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('report_found') }}" class="sidebar-link">
+              <i class="fa-solid fa-circle-check"></i> File Found Report
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('logout') }}" class="sidebar-link logout-link">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+            </a>
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Admin Main Workspace -->
+      <section class="dashboard-main">
+        <div class="dashboard-header">
+          <div>
+            <span class="section-eyebrow" style="background-color: var(--secondary-light); color: var(--secondary-hover);">
+              <i class="fa-solid fa-lock"></i> Staff Administration
+            </span>
+            <h1 class="section-title" style="margin-bottom: 0.25rem;">Lost & Found System Overview</h1>
+            <p class="section-subtitle">Real-time status management, report moderation, and inventory reconciliation.</p>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem;">
+            <button onclick="window.print()" class="btn btn-outline btn-sm">
+              <i class="fa-solid fa-print"></i> Print Report
+            </button>
+            <a href="{{ url_for('report_found') }}" class="btn btn-accent btn-sm">
+              <i class="fa-solid fa-plus"></i> Log Custody Item
+            </a>
+          </div>
+        </div>
+
+        <!-- 4 Key Admin Metrics -->
+        <div class="dashboard-stats">
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+            <div>
+              <div id="admin-stat-total" class="stat-number">{{ total_reports }}</div>
+              <div class="stat-label">Total Reports</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="background-color: var(--lost-bg); color: var(--lost-text);">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+              <div id="admin-stat-lost" class="stat-number">{{ lost_reports }}</div>
+              <div class="stat-label">Lost Items</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+              <div id="admin-stat-found" class="stat-number">{{ found_reports }}</div>
+              <div class="stat-label">Found Items</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <i class="fa-solid fa-handshake-angle"></i>
+            </div>
+            <div>
+              <div id="admin-stat-returned" class="stat-number">{{ returned_reports }}</div>
+              <div class="stat-label">Returned Items</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reports Moderation Table Card -->
+        <div class="table-card">
+          <div class="table-header">
+            <div>
+              <h3 style="font-size: 1.15rem; color: var(--primary);">Campus Reports Registry</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Change item status to Active or Returned, inspect details, or remove duplicate reports</p>
+            </div>
+
+            <!-- Table Filter Toolbar -->
+            <form method="GET" action="{{ url_for('admin_dashboard') }}" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <div class="search-input-wrap" style="min-width: 200px;">
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Filter reports..." style="padding: 0.45rem 0.75rem; font-size: 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none; width: 100%;">
+              </div>
+              <select name="type" onchange="this.form.submit()" style="padding: 0.45rem 0.75rem; font-size: 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #FFF; outline: none;">
+                <option value="all" {{ 'selected' if current_type == 'all' else '' }}>All Types</option>
+                <option value="lost" {{ 'selected' if current_type == 'lost' else '' }}>Lost Only</option>
+                <option value="found" {{ 'selected' if current_type == 'found' else '' }}>Found Only</option>
+              </select>
+              <select name="status" onchange="this.form.submit()" style="padding: 0.45rem 0.75rem; font-size: 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #FFF; outline: none;">
+                <option value="all" {{ 'selected' if current_status == 'all' else '' }}>All Statuses</option>
+                <option value="active" {{ 'selected' if current_status == 'active' else '' }}>Active</option>
+                <option value="returned" {{ 'selected' if current_status == 'returned' else '' }}>Returned</option>
+                <option value="pending" {{ 'selected' if current_status == 'pending' else '' }}>Pending</option>
+              </select>
+              <a href="{{ url_for('admin_dashboard') }}" class="btn btn-sm btn-outline">Reset</a>
+            </form>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Item Details</th>
+                  <th>Type</th>
+                  <th>Campus Location</th>
+                  <th>Reporter</th>
+                  <th>Update Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-reports-tbody">
+                {% if reports|length == 0 %}
+                  <tr>
+                    <td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                      <i class="fa-solid fa-folder-open" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block;"></i>
+                      No reports match the current administrative filter criteria.
+                    </td>
+                  </tr>
+                {% else %}
+                  {% for item in reports %}
+                    <tr>
+                      <td>
+                        <div class="table-item-cell">
+                          <img src="{{ item.get_image_url() }}" alt="{{ item.item_name }}" class="table-thumb" onerror="this.src='/static/images/headphones.svg'">
+                          <div>
+                            <strong style="color: var(--primary);">{{ item.item_name }}</strong>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">{{ item.category }} • ID: #{{ item.id }}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        {% if item.report_type == 'lost' %}
+                          <span class="badge badge-lost">Lost</span>
+                        {% else %}
+                          <span class="badge badge-found">Found</span>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <div style="font-size: 0.85rem; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                          {{ item.location }}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ item.report_date }}</div>
+                      </td>
+                      <td>
+                        <div style="font-size: 0.85rem; font-weight: 600;">{{ item.contact }}</div>
+                        {% if item.contact_phone %}
+                          <div style="font-size: 0.75rem; color: var(--text-muted);">{{ item.contact_phone }}</div>
+                        {% endif %}
+                      </td>
+                      <td>
+                        <form action="{{ url_for('update_status', item_id=item.id) }}" method="POST">
+                          <select name="status" class="status-select" onchange="this.form.submit()" title="Change status to Active or Returned">
+                            <option value="Active" {{ 'selected' if item.status == 'Active' else '' }}>Active</option>
+                            <option value="Pending" {{ 'selected' if item.status == 'Pending' else '' }}>Pending</option>
+                            <option value="Returned" {{ 'selected' if item.status == 'Returned' else '' }}>Returned</option>
+                          </select>
+                        </form>
+                      </td>
+                      <td>
+                        <div style="display: flex; gap: 0.4rem; align-items: center;">
+                          <a href="{{ url_for('item_details', item_id=item.id) }}" class="btn btn-sm btn-outline" title="Inspect full item details">
+                            <i class="fa-regular fa-eye"></i>
+                          </a>
+                          <form action="{{ url_for('admin_delete_item', item_id=item.id) }}" method="POST" onsubmit="return confirm('Permanently remove report for \'{{ item.item_name }}\'?');" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-outline" style="color: var(--lost-text);" title="Delete report">
+                              <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    setTimeout(() => {
+      const toasts = document.querySelectorAll('.toast');
+      toasts.forEach(toast => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      });
+    }, 4000);
+  </script>
+</body>
+</html>

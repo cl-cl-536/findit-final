@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up – FindIt Lost & Found</title>
+  <meta name="description" content="Register your campus student or staff account for FindIt lost and found management.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container">
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="FindIt Campus">
+      </a>
+
+      <button id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <ul id="nav-menu" class="nav-menu">
+        <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+        <li><a href="{{ url_for('browse') }}" class="nav-link">Browse Items</a></li>
+        <li><a href="{{ url_for('report_lost') }}" class="nav-link">Report Lost</a></li>
+        <li><a href="{{ url_for('report_found') }}" class="nav-link">Report Found</a></li>
+      </ul>
+
+      <div id="nav-actions" class="nav-actions">
+        <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">
+          <i class="fa-regular fa-user"></i> Log In
+        </a>
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm active">
+          Sign Up
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Message Toasts -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="toast-container" class="toast-container">
+        {% for category, message in messages %}
+          <div class="toast {{ 'error' if category == 'error' else 'success' }}">
+            <i class="fa-solid {{ 'fa-circle-exclamation' if category == 'error' else 'fa-circle-check' }}"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="main-content auth-page">
+    <div class="container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <a href="{{ url_for('index') }}">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="FindIt Logo">
+          </a>
+          <h2>Create Campus Account</h2>
+          <p>Join fellow students and staff in keeping our campus connected</p>
+        </div>
+
+        <form id="register-form" action="{{ url_for('register') }}" method="POST">
+          <div class="form-group" style="margin-bottom: 1.15rem;">
+            <label for="name" class="form-label">Full Name <span class="required">*</span></label>
+            <div style="position: relative;">
+              <input type="text" id="name" name="name" class="form-control" placeholder="e.g., Alex Johnson" required style="padding-left: 2.5rem;">
+              <i class="fa-regular fa-user" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.15rem;">
+            <label for="email" class="form-label">College Email Address <span class="required">*</span></label>
+            <div style="position: relative;">
+              <input type="email" id="email" name="email" class="form-control" placeholder="student@campus.edu" required style="padding-left: 2.5rem;">
+              <i class="fa-regular fa-envelope" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+            </div>
+            <span class="form-hint">Please use your valid university email address.</span>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.15rem;">
+            <label for="password" class="form-label">Password <span class="required">*</span></label>
+            <div style="position: relative;">
+              <input type="password" id="password" name="password" class="form-control" placeholder="At least 6 characters" minlength="6" required style="padding-left: 2.5rem;">
+              <i class="fa-solid fa-lock" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label for="confirm_password" class="form-label">Confirm Password <span class="required">*</span></label>
+            <div style="position: relative;">
+              <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Re-enter password" minlength="6" required style="padding-left: 2.5rem;">
+              <i class="fa-solid fa-shield-halved" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg btn-block">
+            Create Account <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          Already registered? <a href="{{ url_for('login') }}" style="font-weight: 600;">Log In to your Account</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border: none; padding: 0;">
+        <div>&copy; 2026 FindIt Campus Lost & Found System. Cloud Computing Mini-Project.</div>
+        <div><a href="{{ url_for('index') }}">Back to Home</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    setTimeout(() => {
+      const toasts = document.querySelectorAll('.toast');
+      toasts.forEach(toast => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      });
+    }, 4000);
+  </script>
+</body>
+</html>

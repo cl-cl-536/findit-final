@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#FEF3C7" opacity="0.4"/>
+  <circle cx="200" cy="150" r="110" fill="#FDE68A" opacity="0.4"/>
+  <!-- Brown Leather Wallet -->
+  <g transform="translate(90, 75)">
+    <!-- Back leather fold -->
+    <rect x="0" y="20" width="220" height="135" rx="18" fill="#78350F"/>
+    <rect x="8" y="26" width="204" height="123" rx="14" fill="#92400E"/>
+    <!-- Stitching line -->
+    <rect x="14" y="32" width="192" height="111" rx="10" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <!-- Card slot 1 -->
+    <rect x="25" y="0" width="120" height="60" rx="8" fill="#1E40AF"/>
+    <circle cx="45" cy="20" r="8" fill="#F59E0B"/>
+    <rect x="62" y="16" width="60" height="8" rx="2" fill="#93C5FD"/>
+    <!-- Card slot 2 (Cash) -->
+    <rect x="50" y="10" width="140" height="50" rx="6" fill="#10B981" opacity="0.8"/>
+    <!-- Wallet inner fold / divider -->
+    <path d="M110 32 L110 143" stroke="#78350F" stroke-width="3"/>
+    <!-- Leather Clasp with Button -->
+    <path d="M180 75 L230 75 C236 75 240 80 240 86 C240 92 236 97 230 97 L180 97 Z" fill="#78350F"/>
+    <circle cx="225" cy="86" r="6" fill="#F59E0B" stroke="#B45309" stroke-width="1"/>
+  </g>
+</svg>
+

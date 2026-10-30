@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FindIt – College Campus Cloud-Based Lost & Found</title>
+  <meta name="description" content="A modern, cloud-based lost and found item management system for university campus communities.">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container">
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="FindIt Campus">
+      </a>
+
+      <button id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <ul id="nav-menu" class="nav-menu">
+        <li><a href="{{ url_for('index') }}" class="nav-link active">Home</a></li>
+        <li><a href="{{ url_for('browse') }}" class="nav-link">Browse Items</a></li>
+        <li><a href="{{ url_for('report_lost') }}" class="nav-link">Report Lost</a></li>
+        <li><a href="{{ url_for('report_found') }}" class="nav-link">Report Found</a></li>
+      </ul>
+
+      <div id="nav-actions" class="nav-actions">
+        {% if current_user %}
+          <a href="{{ url_for('dashboard') }}" class="user-menu-btn" title="View My Dashboard">
+            <span class="avatar">{{ current_user.name[0]|upper }}</span>
+            <span>{{ current_user.name.split(' ')[0] }}</span>
+          </a>
+          {% if current_user.role == 'admin' %}
+          <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline btn-sm" style="color: var(--secondary);" title="Admin Console">
+            <i class="fa-solid fa-shield-halved"></i> Admin
+          </a>
+          {% endif %}
+          <a href="{{ url_for('dashboard') }}" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-gauge"></i> Dashboard
+          </a>
+          <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline" style="color: var(--lost-text);" title="Log out">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">
+            <i class="fa-regular fa-user"></i> Log In
+          </a>
+          <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">
+            Sign Up
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Message Toasts -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="toast-container" class="toast-container">
+        {% for category, message in messages %}
+          <div class="toast {{ 'error' if category == 'error' else 'success' }}">
+            <i class="fa-solid {{ 'fa-circle-exclamation' if category == 'error' else 'fa-circle-check' }}"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="main-content">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="hero-tag">
+            <i class="fa-solid fa-cloud"></i> Campus Cloud Computing Initiative
+          </div>
+          <h1 class="hero-title">
+            Lost Something?<br><span>Let's Find It.</span>
+          </h1>
+          <p class="hero-description">
+            Your campus community, connected through a smarter Lost and Found experience.
+            Quickly report missing belongings, verify discovered items, and bring what matters back to safe hands.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="{{ url_for('report_lost') }}" class="btn btn-navy btn-lg">
+              <i class="fa-solid fa-circle-exclamation"></i> Report Lost Item
+            </a>
+            <a href="{{ url_for('report_found') }}" class="btn btn-accent btn-lg">
+              <i class="fa-solid fa-circle-check"></i> Report Found Item
+            </a>
+            <a href="{{ url_for('browse') }}" class="btn btn-outline btn-lg">
+              <i class="fa-solid fa-compass"></i> Browse Items
+            </a>
+          </div>
+
+          <!-- Hero Quick Search -->
+          <form class="hero-quick-search" action="{{ url_for('browse') }}" method="GET">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" name="q" placeholder="Search by item name (e.g., headphones, ID card, keys)...">
+            <button type="submit" class="btn btn-primary btn-sm">Search</button>
+          </form>
+        </div>
+
+        <div class="hero-visual">
+          <img src="{{ url_for('static', filename='images/hero-illustration.svg') }}" alt="Everyday lost and found belongings like backpacks, keys, headphones, books, and wallets">
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+      <div class="container stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <i class="fa-solid fa-boxes-stacked"></i>
+          </div>
+          <div>
+            <div id="stat-total" class="stat-number">{{ total_items }}</div>
+            <div class="stat-label">Total Items Reported</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <i class="fa-solid fa-hand-holding-heart"></i>
+          </div>
+          <div>
+            <div id="stat-found" class="stat-number">{{ found_items }}</div>
+            <div class="stat-label">Items Found</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon orange">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+          </div>
+          <div>
+            <div id="stat-returned" class="stat-number">{{ returned_items }}</div>
+            <div class="stat-label">Items Returned</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recently Reported Items -->
+    <section class="items-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Recent Activity</span>
+          <h2 class="section-title">Recently Reported Items</h2>
+          <p class="section-subtitle">Real-time updates of belongings reported lost or turned in across university campus blocks.</p>
+        </div>
+
+        <div id="home-recent-grid" class="items-grid">
+          {% for item in recent_items %}
+            <div class="item-card">
+              <div class="item-card-media">
+                <img src="{{ item.get_image_url() }}" alt="{{ item.item_name }}" onerror="this.src='/static/images/headphones.svg'">
+                <div class="item-badge-type">
+                  {% if item.report_type == 'lost' %}
+                    <span class="badge badge-lost"><i class="fa-solid fa-circle-exclamation"></i> Lost</span>
+                  {% else %}
+                    <span class="badge badge-found"><i class="fa-solid fa-circle-check"></i> Found</span>
+                  {% endif %}
+                </div>
+                <div class="item-badge-category">
+                  <span class="badge badge-category">{{ item.category }}</span>
+                </div>
+              </div>
+              <div class="item-card-body">
+                <h3 class="item-card-title">{{ item.item_name }}</h3>
+                <p class="item-card-desc">{{ item.description }}</p>
+                <div class="item-card-meta">
+                  <div class="meta-row">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>{{ item.location }}</span>
+                  </div>
+                  <div class="meta-row">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span>{{ item.report_date }}</span>
+                  </div>
+                </div>
+                <div class="item-card-footer">
+                  {% if item.status == 'Returned' %}
+                    <span class="badge badge-returned"><i class="fa-solid fa-check"></i> Returned</span>
+                  {% elif item.status == 'Pending' %}
+                    <span class="badge badge-pending"><i class="fa-solid fa-clock"></i> Pending</span>
+                  {% else %}
+                    <span class="badge badge-active"><i class="fa-solid fa-bolt"></i> Active</span>
+                  {% endif %}
+                  <a href="{{ url_for('item_details', item_id=item.id) }}" class="btn btn-outline btn-sm">
+                    View Details <i class="fa-solid fa-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+          <a href="{{ url_for('browse') }}" class="btn btn-outline btn-lg">
+            <i class="fa-solid fa-list-ul"></i> Explore All Reported Items
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Simple & Transparent</span>
+          <h2 class="section-title">How It Works</h2>
+          <p class="section-subtitle">Three straightforward steps designed to safely reunite campus members with their personal belongings.</p>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-icon">
+              <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <h3 class="step-title">1. Report an Item</h3>
+            <p class="step-desc">
+              Submit a quick 2-minute report for something you misplaced or discovered. Upload a photograph, campus location, and description.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-icon">
+              <i class="fa-solid fa-magnifying-glass-location"></i>
+            </div>
+            <h3 class="step-title">2. Browse Lost and Found Items</h3>
+            <p class="step-desc">
+              Filter by category, search by building or department, and review photo listings to identify matches instantly.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-icon">
+              <i class="fa-solid fa-handshake-angle"></i>
+            </div>
+            <h3 class="step-title">3. Reunite with Belongings</h3>
+            <p class="step-desc">
+              Connect directly with the finder or campus security desk, verify identity, and mark the report resolved.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Campus Categories Section -->
+    <section class="categories-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Item Directories</span>
+          <h2 class="section-title">Browse by Category</h2>
+          <p class="section-subtitle">Quickly jump into categorized listings of frequently misplaced campus essentials.</p>
+        </div>
+
+        <div class="categories-grid">
+          <a href="{{ url_for('browse', category='Electronics') }}" class="category-card">
+            <div class="category-icon"><i class="fa-solid fa-laptop"></i></div>
+            <div class="category-name">Electronics</div>
+            <div class="category-count">Headphones, Chargers</div>
+          </a>
+          <a href="{{ url_for('browse', category='Accessories') }}" class="category-card">
+            <div class="category-icon"><i class="fa-solid fa-gem"></i></div>
+            <div class="category-name">Accessories</div>
+            <div class="category-count">Wallets, Bottles, Watches</div>
+          </a>
+          <a href="{{ url_for('browse', category='Books') }}" class="category-card">
+            <div class="category-icon"><i class="fa-solid fa-book"></i></div>
+            <div class="category-name">Books</div>
+            <div class="category-count">Textbooks, Notebooks</div>
+          </a>
+          <a href="{{ url_for('browse', category='ID Cards') }}" class="category-card">
+            <div class="category-icon"><i class="fa-solid fa-id-card"></i></div>
+            <div class="category-name">ID Cards</div>
+            <div class="category-count">Student IDs, Passes</div>
+          </a>
+          <a href="{{ url_for('browse', category='Bags') }}" class="category-card">
+            <div class="category-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+            <div class="category-name">Bags</div>
+            <div class="category-count">Backpacks, Totes</div>
+          </a>
+          <a href="{{ url_for('browse', category='Other') }}" class="category-card">
+            <div class="category-icon"><i class="fa-solid fa-key"></i></div>
+            <div class="category-name">Other</div>
+            <div class="category-count">Keys, Umbrella, Sports</div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Clean Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="FindIt">
+          <p>
+            A dedicated campus cloud computing system designed to streamline lost property recovery for students, faculty, and campus security.
+          </p>
+          <div style="margin-top: 1rem;">
+            <span class="footer-cloud-badge">
+              <i class="fa-brands fa-aws"></i> Cloud Computing Mini-Project
+            </span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('browse') }}">Browse All Items</a></li>
+            <li><a href="{{ url_for('report_lost') }}">Report Lost Belonging</a></li>
+            <li><a href="{{ url_for('report_found') }}">Report Found Belonging</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Portals</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('login') }}">Student & Staff Login</a></li>
+            <li><a href="{{ url_for('register') }}">Create Campus Account</a></li>
+            <li><a href="{{ url_for('dashboard') }}">User Dashboard</a></li>
+            <li><a href="{{ url_for('admin_dashboard') }}">Administrator Console</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Campus Hubs</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('browse', q='Library') }}"><i class="fa-solid fa-building-columns"></i> Central Library</a></li>
+            <li><a href="{{ url_for('browse', q='Engineering') }}"><i class="fa-solid fa-gear"></i> Engineering Block</a></li>
+            <li><a href="{{ url_for('browse', q='Auditorium') }}"><i class="fa-solid fa-microphone"></i> Campus Auditorium</a></li>
+            <li><a href="{{ url_for('browse', q='Security') }}"><i class="fa-solid fa-shield-halved"></i> Central Security Desk</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          &copy; 2026 FindIt – College Cloud Computing Mini-Project. Designed for campus community demonstrations.
+        </div>
+        <div style="display: flex; gap: 1rem;">
+          <a href="{{ url_for('browse') }}" style="color: var(--text-muted);">Browse</a>
+          <a href="{{ url_for('admin_dashboard') }}" style="color: var(--text-muted);"><i class="fa-solid fa-shield-halved"></i> Faculty Admin Demo</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile navigation toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    const navActions = document.getElementById('nav-actions');
+    if (navToggle && navMenu) {
+      navToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('open');
+        if (navActions) navActions.classList.toggle('open');
+      });
+    }
+
+    // Auto dismiss toasts
+    setTimeout(() => {
+      const toasts = document.querySelectorAll('.toast');
+      toasts.forEach(toast => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      });
+    }, 4000);
+  </script>
+</body>
+</html>

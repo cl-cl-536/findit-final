@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#F8FAFC"/>
+  <circle cx="200" cy="150" r="110" fill="#E2E8F0" opacity="0.6"/>
+  <!-- College Backpack -->
+  <g transform="translate(125, 40)">
+    <!-- Top Grab Handle -->
+    <path d="M55 35 C55 12 95 12 95 35" stroke="#F59E0B" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- Main Pack Body -->
+    <rect x="15" y="35" width="120" height="185" rx="36" fill="#172554"/>
+    <path d="M35 35 Q75 25 115 35" stroke="#3B82F6" stroke-width="4" fill="none"/>
+    
+    <!-- Top zipper arch -->
+    <path d="M25 70 Q75 55 125 70" stroke="#334155" stroke-width="4" fill="none"/>
+    
+    <!-- Front Accessory Pocket -->
+    <rect x="25" y="105" width="100" height="100" rx="20" fill="#1E3A8A"/>
+    <!-- Front pocket zipper -->
+    <line x1="38" y1="125" x2="112" y2="125" stroke="#93C5FD" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- Side Water bottle mesh pocket -->
+    <rect x="8" y="130" width="12" height="55" rx="6" fill="#3B82F6" opacity="0.7"/>
+    <rect x="130" y="130" width="12" height="55" rx="6" fill="#3B82F6" opacity="0.7"/>
+    
+    <!-- Brand Patch / College Tag -->
+    <rect x="60" y="150" width="30" height="20" rx="4" fill="#F8FAFC"/>
+    <circle cx="75" cy="160" r="5" fill="#EF4444"/>
+    
+    <!-- Bottom reinforced base -->
+    <path d="M15 190 Q75 195 135 190 L135 200 C135 215 120 220 100 220 L50 220 C30 220 15 215 15 200 Z" fill="#0F172A"/>
+  </g>
+</svg>
+

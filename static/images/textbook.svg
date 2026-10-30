@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#EFF6FF"/>
+  <circle cx="200" cy="150" r="110" fill="#DBEAFE" opacity="0.6"/>
+  <!-- College Textbook -->
+  <g transform="translate(110, 50)">
+    <!-- Book Shadow & Back cover -->
+    <rect x="15" y="10" width="160" height="200" rx="10" fill="#0F172A" opacity="0.15"/>
+    <rect x="10" y="8" width="160" height="195" rx="8" fill="#1E3A8A"/>
+    <!-- Page block edges -->
+    <rect x="22" y="16" width="150" height="180" rx="4" fill="#F8FAFC"/>
+    <line x1="172" y1="20" x2="172" y2="192" stroke="#CBD5E1" stroke-width="2"/>
+    <!-- Front Cover (tilted slightly for 3D realism) -->
+    <rect x="0" y="0" width="160" height="195" rx="8" fill="#172554"/>
+    <!-- Book Spine -->
+    <rect x="0" y="0" width="22" height="195" rx="6" fill="#0F172A"/>
+    <line x1="22" y1="0" x2="22" y2="195" stroke="#F59E0B" stroke-width="2"/>
+    <!-- Spine gold accents -->
+    <line x1="4" y1="30" x2="18" y2="30" stroke="#F59E0B" stroke-width="2"/>
+    <line x1="4" y1="165" x2="18" y2="165" stroke="#F59E0B" stroke-width="2"/>
+    
+    <!-- Cover graphic -->
+    <rect x="36" y="28" width="110" height="70" rx="6" fill="#3B82F6"/>
+    <!-- Calculus curve graph -->
+    <path d="M44 80 Q70 35 90 65 T138 40" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+    <line x1="44" y1="85" x2="138" y2="85" stroke="#93C5FD" stroke-width="1.5"/>
+    <line x1="44" y1="35" x2="44" y2="85" stroke="#93C5FD" stroke-width="1.5"/>
+    
+    <!-- Title text -->
+    <text x="36" y="125" font-family="'Inter', sans-serif" font-weight="800" font-size="14" fill="#FFFFFF">CALCULUS</text>
+    <text x="36" y="140" font-family="'Inter', sans-serif" font-weight="600" font-size="9" fill="#93C5FD">9TH EDITION • STEWART</text>
+    <text x="36" y="170" font-family="'Inter', sans-serif" font-weight="500" font-size="8" fill="#F59E0B">MATHEMATICS DEPT</text>
+    
+    <!-- Ribbon bookmark -->
+    <path d="M125 0 L125 70 L132 60 L139 70 L139 0 Z" fill="#EF4444"/>
+  </g>
+</svg>
+

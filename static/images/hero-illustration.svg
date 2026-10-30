@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EFF6FF" />
+      <stop offset="100%" stop-color="#DBEAFE" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F8FAFC" />
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    <linearGradient id="navyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E3A8A" />
+      <stop offset="100%" stop-color="#172554" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0F172A" flood-opacity="0.12" />
+    </filter>
+    <filter id="floatGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#3B82F6" flood-opacity="0.18" />
+    </filter>
+  </defs>
+
+  <!-- Background decorative circular blobs -->
+  <circle cx="300" cy="250" r="210" fill="url(#skyGrad)" opacity="0.6"/>
+  <circle cx="480" cy="130" r="80" fill="#FEF3C7" opacity="0.5"/>
+  <circle cx="100" cy="380" r="60" fill="#E0F2FE" opacity="0.7"/>
+
+  <!-- Radar / Search waves emanating from center -->
+  <circle cx="300" cy="240" r="160" fill="none" stroke="#93C5FD" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.7"/>
+  <circle cx="300" cy="240" r="110" fill="none" stroke="#60A5FA" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.8"/>
+  <circle cx="300" cy="240" r="60" fill="none" stroke="#3B82F6" stroke-width="2" opacity="0.4"/>
+
+  <!-- Central Search Beacon / Pin -->
+  <g transform="translate(270, 190)" filter="url(#floatGlow)">
+    <circle cx="30" cy="30" r="28" fill="url(#blueGrad)" />
+    <!-- Magnifying glass / location combo -->
+    <path d="M22 28 A8 8 0 1 1 38 28 A8 8 0 1 1 22 28 M35 34 L43 42" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- 1. Backpack (Center Left) -->
+  <g transform="translate(100, 180)" filter="url(#softShadow)">
+    <rect x="0" y="25" width="100" height="120" rx="24" fill="url(#navyGrad)" />
+    <!-- Backpack front pocket -->
+    <rect x="15" y="65" width="70" height="60" rx="12" fill="#2563EB" />
+    <!-- Zipper lines -->
+    <path d="M25 65 L75 65" stroke="#93C5FD" stroke-width="2" stroke-linecap="round"/>
+    <path d="M20 38 Q50 30 80 38" stroke="#3B82F6" stroke-width="3" fill="none"/>
+    <!-- Top handle -->
+    <path d="M36 25 C36 12 64 12 64 25" stroke="#F59E0B" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <!-- Tag badge -->
+    <circle cx="85" cy="55" r="8" fill="#10B981"/>
+    <path d="M82 55 L84 57 L88 53" stroke="#FFF" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- 2. Wireless Headphones (Top Center-Right) -->
+  <g transform="translate(360, 60)" filter="url(#softShadow)">
+    <!-- Headband -->
+    <path d="M20 75 C20 25 100 25 100 75" fill="none" stroke="#1E293B" stroke-width="8" stroke-linecap="round"/>
+    <path d="M20 75 C20 28 100 28 100 75" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
+    <!-- Left earcup -->
+    <rect x="10" y="70" width="18" height="32" rx="9" fill="#0F172A"/>
+    <rect x="18" y="74" width="8" height="24" rx="4" fill="#3B82F6"/>
+    <!-- Right earcup -->
+    <rect x="92" y="70" width="18" height="32" rx="9" fill="#0F172A"/>
+    <rect x="94" y="74" width="8" height="24" rx="4" fill="#3B82F6"/>
+  </g>
+
+  <!-- 3. Brown Leather Wallet & Cards (Bottom Center-Right) -->
+  <g transform="translate(340, 260)" filter="url(#softShadow)">
+    <!-- Wallet body -->
+    <rect x="0" y="20" width="115" height="80" rx="14" fill="#78350F" />
+    <rect x="4" y="24" width="107" height="72" rx="10" fill="#92400E" />
+    <!-- Credit/ID card sticking out -->
+    <rect x="18" y="5" width="75" height="42" rx="6" fill="#3B82F6" stroke="#93C5FD" stroke-width="1"/>
+    <rect x="25" y="14" width="18" height="12" rx="2" fill="#FBBF24"/>
+    <line x1="48" y1="16" x2="82" y2="16" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+    <line x1="48" y1="22" x2="72" y2="22" stroke="#BFDBFE" stroke-width="2" stroke-linecap="round"/>
+    <!-- Wallet clasp with stitch -->
+    <path d="M60 48 L112 48 C116 48 118 52 118 56 C118 60 116 64 112 64 L60 64 Z" fill="#78350F"/>
+    <circle cx="106" cy="56" r="4" fill="#F59E0B"/>
+  </g>
+
+  <!-- 4. College Books Stack (Bottom Left) -->
+  <g transform="translate(180, 310)" filter="url(#softShadow)">
+    <!-- Bottom book (Navy) -->
+    <rect x="0" y="45" width="110" height="22" rx="4" fill="#1E3A8A"/>
+    <rect x="6" y="49" width="100" height="14" fill="#F8FAFC"/>
+    <path d="M0 45 L0 67 L8 67 L8 45 Z" fill="#172554"/>
+    <line x1="18" y1="56" x2="95" y2="56" stroke="#E2E8F0" stroke-width="2"/>
+
+    <!-- Middle book (Orange/Gold) -->
+    <rect x="12" y="25" width="96" height="20" rx="4" fill="#D97706"/>
+    <rect x="18" y="29" width="86" height="12" fill="#FEF3C7"/>
+    <path d="M12 25 L12 45 L20 45 L20 25 Z" fill="#B45309"/>
+
+    <!-- Top book (Sky Blue) -->
+    <rect x="22" y="7" width="82" height="18" rx="4" fill="#2563EB"/>
+    <rect x="28" y="10" width="72" height="12" fill="#FFFFFF"/>
+    <path d="M22 7 L22 25 L30 25 L30 7 Z" fill="#1D4ED8"/>
+    <!-- Bookmark ribbon -->
+    <path d="M68 7 L68 22 L73 18 L78 22 L78 7 Z" fill="#EF4444"/>
+  </g>
+
+  <!-- 5. Keys with Campus Lanyard (Top Left) -->
+  <g transform="translate(140, 80)" filter="url(#softShadow)">
+    <!-- Lanyard strap -->
+    <path d="M20 10 C40 35 30 70 50 85" stroke="#3B82F6" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M20 10 C40 35 30 70 50 85" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="3,3" stroke-linecap="round" fill="none"/>
+    <!-- Metal ring -->
+    <circle cx="53" cy="90" r="10" fill="none" stroke="#94A3B8" stroke-width="3"/>
+    <!-- Key 1 -->
+    <path d="M58 97 L75 118 L70 122 L68 120 L64 123 L62 120 L55 103" fill="#CBD5E1" stroke="#64748B" stroke-width="1.5"/>
+    <circle cx="57" cy="99" r="2.5" fill="#475569"/>
+    <!-- Fob -->
+    <rect x="36" y="98" width="16" height="26" rx="6" fill="#1E293B"/>
+    <circle cx="44" cy="106" r="2" fill="#EF4444"/>
+  </g>
+
+  <!-- 6. Floating Status Cards / Badges (Interactive feel) -->
+  <!-- Lost Badge Floating Card -->
+  <g transform="translate(430, 180)" filter="url(#softShadow)">
+    <rect x="0" y="0" width="145" height="56" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <circle cx="26" cy="28" r="14" fill="#FEE2E2"/>
+    <path d="M26 21 L26 29 M26 34 L26 35" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="48" y="24" font-family="'Inter', sans-serif" font-weight="700" font-size="11" fill="#DC2626">REPORTED LOST</text>
+    <text x="48" y="40" font-family="'Inter', sans-serif" font-weight="500" font-size="12" fill="#1E293B">Wireless Buds</text>
+  </g>
+
+  <!-- Found Badge Floating Card -->
+  <g transform="translate(30, 270)" filter="url(#softShadow)">
+    <rect x="0" y="0" width="140" height="56" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+    <circle cx="26" cy="28" r="14" fill="#D1FAE5"/>
+    <path d="M21 28 L25 32 L31 24" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="48" y="24" font-family="'Inter', sans-serif" font-weight="700" font-size="11" fill="#059669">FOUND & SAFE</text>
+    <text x="48" y="40" font-family="'Inter', sans-serif" font-weight="500" font-size="12" fill="#1E293B">Campus ID Card</text>
+  </g>
+
+  <!-- Sparkles / decorative dots -->
+  <circle cx="490" cy="90" r="3" fill="#F59E0B" />
+  <circle cx="280" cy="70" r="2.5" fill="#3B82F6" />
+  <circle cx="110" cy="150" r="3" fill="#3B82F6" />
+  <circle cx="470" cy="370" r="4" fill="#10B981" />
+  <circle cx="310" cy="430" r="2" fill="#F59E0B" />
+</svg>
+

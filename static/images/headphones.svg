@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#F1F5F9"/>
+  <!-- Ambient glow -->
+  <circle cx="200" cy="150" r="110" fill="#E2E8F0" opacity="0.6"/>
+  <!-- Headphones -->
+  <g transform="translate(110, 50)">
+    <!-- Arch -->
+    <path d="M20 110 C20 30 160 30 160 110" fill="none" stroke="#0F172A" stroke-width="18" stroke-linecap="round"/>
+    <path d="M20 110 C20 34 160 34 160 110" fill="none" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+    <!-- Left ear cup -->
+    <rect x="2" y="100" width="36" height="65" rx="18" fill="#1E293B"/>
+    <rect x="18" y="108" width="14" height="48" rx="7" fill="#3B82F6"/>
+    <!-- Right ear cup -->
+    <rect x="142" y="100" width="36" height="65" rx="18" fill="#1E293B"/>
+    <rect x="148" y="108" width="14" height="48" rx="7" fill="#3B82F6"/>
+    <!-- Gold accent mark -->
+    <circle cx="20" cy="132" r="4" fill="#F59E0B"/>
+    <circle cx="160" cy="132" r="4" fill="#F59E0B"/>
+  </g>
+</svg>
+

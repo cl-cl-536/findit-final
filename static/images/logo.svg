@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 44" width="180" height="44">
+  <defs>
+    <linearGradient id="logoBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    <linearGradient id="logoAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="100%" stop-color="#F59E0B" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Icon Mark: Modern Pin & Search Loop -->
+  <g transform="translate(4, 4)">
+    <!-- Rounded Shield / Base -->
+    <rect x="0" y="0" width="36" height="36" rx="10" fill="url(#logoBlue)"/>
+    <!-- Radar ring -->
+    <circle cx="18" cy="18" r="12" fill="none" stroke="#93C5FD" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
+    <!-- Magnifying Glass with Pin -->
+    <circle cx="16" cy="15" r="6.5" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+    <path d="M21 20 L27 26" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Orange accent dot -->
+    <circle cx="25" cy="10" r="3.5" fill="url(#logoAccent)"/>
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="48" y="27" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="22" font-weight="800" fill="#172554" letter-spacing="-0.5">Find<tspan fill="#3B82F6">It</tspan></text>
+  <!-- Mini campus subtitle badge -->
+  <text x="122" y="19" font-family="'Inter', sans-serif" font-size="8.5" font-weight="700" fill="#F59E0B" letter-spacing="0.5">CAMPUS</text>
+</svg>
+

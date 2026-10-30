@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#EFF6FF"/>
+  <circle cx="200" cy="150" r="100" fill="#DBEAFE" opacity="0.6"/>
+  <!-- Water Bottle -->
+  <g transform="translate(145, 35)">
+    <!-- Cap & Loop -->
+    <path d="M42 15 C42 5 68 5 68 15" stroke="#1E3A8A" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="36" y="15" width="38" height="20" rx="6" fill="#172554"/>
+    <rect x="42" y="35" width="26" height="12" fill="#2563EB"/>
+    <!-- Bottle Body -->
+    <rect x="20" y="47" width="70" height="175" rx="20" fill="#3B82F6"/>
+    <!-- Highlight shine -->
+    <path d="M30 65 L30 205" stroke="#93C5FD" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+    <!-- Grip band -->
+    <rect x="20" y="115" width="70" height="40" rx="4" fill="#2563EB" opacity="0.4"/>
+    <!-- Campus Logo Print -->
+    <circle cx="55" cy="135" r="10" fill="#FEF3C7"/>
+    <path d="M51 135 L55 131 L59 135 L55 139 Z" fill="#D97706"/>
+    <!-- Base -->
+    <rect x="24" y="215" width="62" height="10" rx="4" fill="#1D4ED8"/>
+  </g>
+</svg>
+

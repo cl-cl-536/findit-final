@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Found Item – FindIt</title>
+  <meta name="description" content="Report an item you discovered on college grounds. Help return belongings to students and faculty.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container">
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="FindIt Campus">
+      </a>
+
+      <button id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <ul id="nav-menu" class="nav-menu">
+        <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+        <li><a href="{{ url_for('browse') }}" class="nav-link">Browse Items</a></li>
+        <li><a href="{{ url_for('report_lost') }}" class="nav-link">Report Lost</a></li>
+        <li><a href="{{ url_for('report_found') }}" class="nav-link active">Report Found</a></li>
+      </ul>
+
+      <div id="nav-actions" class="nav-actions">
+        {% if current_user %}
+          <a href="{{ url_for('dashboard') }}" class="user-menu-btn" title="View My Dashboard">
+            <span class="avatar">{{ current_user.name[0]|upper }}</span>
+            <span>{{ current_user.name.split(' ')[0] }}</span>
+          </a>
+          {% if current_user.role == 'admin' %}
+          <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline btn-sm" style="color: var(--secondary);" title="Admin Console">
+            <i class="fa-solid fa-shield-halved"></i> Admin
+          </a>
+          {% endif %}
+          <a href="{{ url_for('dashboard') }}" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-gauge"></i> Dashboard
+          </a>
+          <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline" style="color: var(--lost-text);" title="Log out">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">
+            <i class="fa-regular fa-user"></i> Log In
+          </a>
+          <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">
+            Sign Up
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Message Toasts -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="toast-container" class="toast-container">
+        {% for category, message in messages %}
+          <div class="toast {{ 'error' if category == 'error' else 'success' }}">
+            <i class="fa-solid {{ 'fa-circle-exclamation' if category == 'error' else 'fa-circle-check' }}"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="main-content">
+    <section class="form-page-header">
+      <div class="container">
+        <span class="section-eyebrow" style="background-color: var(--found-bg); color: var(--found-text);">Found Belonging</span>
+        <h1 class="section-title">Report a Found Item</h1>
+        <p class="section-subtitle">Thank you for being a responsible campus member! Share what you discovered so the rightful owner can be reunited.</p>
+      </div>
+    </section>
+
+    <div class="container form-wrapper">
+      <div class="form-card">
+        <form id="report-found-form" action="{{ url_for('report_found') }}" method="POST" enctype="multipart/form-data">
+          <div class="form-grid">
+            <!-- Item Name -->
+            <div class="form-group col-span-2">
+              <label for="item_name" class="form-label">Item Name <span class="required">*</span></label>
+              <input type="text" id="item_name" name="item_name" class="form-control" placeholder="e.g., Blue Water Bottle, Student ID Card, Dell USB-C Charger" required>
+              <span class="form-hint">Summarize the item concisely.</span>
+            </div>
+
+            <!-- Category -->
+            <div class="form-group">
+              <label for="category" class="form-label">Category <span class="required">*</span></label>
+              <select id="category" name="category" class="form-control" required>
+                <option value="" disabled selected>Select category...</option>
+                <option value="Electronics">Electronics (Laptops, Chargers, Audio)</option>
+                <option value="Accessories">Accessories (Wallets, Bottles, Watches)</option>
+                <option value="Books">Books (Textbooks, Notepads, Folders)</option>
+                <option value="ID Cards">ID Cards (Student IDs, Bus Passes)</option>
+                <option value="Bags">Bags (Backpacks, Pouches, Sleeves)</option>
+                <option value="Other">Other Belongings</option>
+              </select>
+            </div>
+
+            <!-- Date Found -->
+            <div class="form-group">
+              <label for="report_date" class="form-label">Date Found <span class="required">*</span></label>
+              <input type="date" id="report_date" name="report_date" class="form-control" required>
+            </div>
+
+            <!-- Found Location -->
+            <div class="form-group col-span-2">
+              <label for="location" class="form-label">Found Location <span class="required">*</span></label>
+              <input type="text" id="location" name="location" class="form-control" placeholder="e.g., Engineering Block C Cafeteria Corner Table, Lecture Hall B Row G" required>
+              <span class="form-hint">Describe where on campus the item was picked up or where it is currently handed over.</span>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group col-span-2">
+              <label for="description" class="form-label">Description <span class="required">*</span></label>
+              <textarea id="description" name="description" class="form-control" placeholder="Describe the item's appearance, distinguishing features, brand name, and whether you handed it to a front desk/security guard or still have it with you..." required></textarea>
+            </div>
+
+            <!-- Photograph Upload -->
+            <div class="form-group col-span-2">
+              <label class="form-label">Upload Photograph (Optional)</label>
+              <div id="file-upload-area" class="file-upload-area">
+                <input type="file" id="item-image" name="image" accept="image/png, image/jpeg, image/webp">
+                <div class="file-upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                <div class="file-upload-text">Click to choose image or drag & drop here</div>
+                <div class="file-upload-subtext">PNG, JPG, JPEG or WEBP (Max 5MB). High resolution photographs help owners recognize their belongings.</div>
+              </div>
+
+              <!-- Live Preview -->
+              <div id="image-preview-container" class="image-preview-container">
+                <div class="image-preview-wrapper">
+                  <img id="image-preview" src="" alt="Selected photo preview">
+                  <button type="button" id="remove-image-btn" class="remove-img-btn" title="Remove photo">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact Information Header -->
+            <div class="col-span-2" style="margin-top: 1rem; padding-top: 1.25rem; border-top: 1px solid var(--border);">
+              <h4 style="font-size: 1.05rem; margin-bottom: 0.25rem;">Finder / Custodian Contact Details</h4>
+              <p class="form-hint">Enter your details or the campus office (e.g. Security Desk) where the owner can collect the item.</p>
+            </div>
+
+            <!-- Contact Name -->
+            <div class="form-group">
+              <label for="contact_name" class="form-label">Name / Office <span class="required">*</span></label>
+              <input type="text" id="contact_name" name="contact_name" value="{{ current_user.name if current_user else '' }}" class="form-control" placeholder="e.g., Alex Chen or Campus Security Desk" required>
+            </div>
+
+            <!-- Contact Email -->
+            <div class="form-group">
+              <label for="contact_email" class="form-label">Contact Email Address <span class="required">*</span></label>
+              <input type="email" id="contact_email" name="contact_email" value="{{ current_user.email if current_user else '' }}" class="form-control" placeholder="e.g., finder@campus.edu or security@campus.edu" required>
+            </div>
+
+            <!-- Contact Phone -->
+            <div class="form-group col-span-2">
+              <label for="contact_phone" class="form-label">Phone / Extension (Optional)</label>
+              <input type="tel" id="contact_phone" name="contact_phone" class="form-control" placeholder="e.g., +1 (555) 890-1234">
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group col-span-2" style="margin-top: 1rem;">
+              <button type="submit" class="btn btn-accent btn-lg btn-block">
+                <i class="fa-solid fa-circle-check"></i> Submit Found Report
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border: none; padding: 0;">
+        <div>&copy; 2026 FindIt Campus Lost & Found System. Cloud Computing Mini-Project.</div>
+        <div><a href="{{ url_for('browse') }}">Browse Directory</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Pre-fill today's date
+    const dateInput = document.getElementById('report_date');
+    if (dateInput && !dateInput.value) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+
+    // Image file preview
+    const imageInput = document.getElementById('item-image');
+    const previewContainer = document.getElementById('image-preview-container');
+    const previewEl = document.getElementById('image-preview');
+    const removeBtn = document.getElementById('remove-image-btn');
+
+    if (imageInput) {
+      imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            previewEl.src = event.target.result;
+            previewContainer.classList.add('active');
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    if (removeBtn) {
+      removeBtn.addEventListener('click', () => {
+        imageInput.value = '';
+        previewEl.src = '';
+        previewContainer.classList.remove('active');
+      });
+    }
+
+    // Auto dismiss toasts
+    setTimeout(() => {
+      const toasts = document.querySelectorAll('.toast');
+      toasts.forEach(toast => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      });
+    }, 4000);
+  </script>
+</body>
+</html>

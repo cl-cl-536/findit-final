@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ item.item_name }} – FindIt Lost & Found</title>
+  <meta name="description" content="Detailed information and contact options for reported campus items.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container">
+      <a href="{{ url_for('index') }}" class="nav-brand">
+        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="FindIt Campus">
+      </a>
+
+      <button id="nav-toggle" class="nav-toggle" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <ul id="nav-menu" class="nav-menu">
+        <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+        <li><a href="{{ url_for('browse') }}" class="nav-link active">Browse Items</a></li>
+        <li><a href="{{ url_for('report_lost') }}" class="nav-link">Report Lost</a></li>
+        <li><a href="{{ url_for('report_found') }}" class="nav-link">Report Found</a></li>
+      </ul>
+
+      <div id="nav-actions" class="nav-actions">
+        {% if current_user %}
+          <a href="{{ url_for('dashboard') }}" class="user-menu-btn" title="View My Dashboard">
+            <span class="avatar">{{ current_user.name[0]|upper }}</span>
+            <span>{{ current_user.name.split(' ')[0] }}</span>
+          </a>
+          {% if current_user.role == 'admin' %}
+          <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline btn-sm" style="color: var(--secondary);" title="Admin Console">
+            <i class="fa-solid fa-shield-halved"></i> Admin
+          </a>
+          {% endif %}
+          <a href="{{ url_for('dashboard') }}" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-gauge"></i> Dashboard
+          </a>
+          <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline" style="color: var(--lost-text);" title="Log out">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm">
+            <i class="fa-regular fa-user"></i> Log In
+          </a>
+          <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">
+            Sign Up
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Message Toasts -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="toast-container" class="toast-container">
+        {% for category, message in messages %}
+          <div class="toast {{ 'error' if category == 'error' else 'success' }}">
+            <i class="fa-solid {{ 'fa-circle-exclamation' if category == 'error' else 'fa-circle-check' }}"></i>
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="main-content details-page">
+    <div class="container">
+      <!-- Breadcrumb Navigation -->
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="{{ url_for('index') }}"><i class="fa-solid fa-house"></i> Home</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <a href="{{ url_for('browse') }}">Browse Items</a>
+        <i class="fa-solid fa-chevron-right"></i>
+        <span style="color: var(--primary); font-weight: 600;">{{ item.item_name }}</span>
+      </nav>
+
+      <!-- Main Item Details Card -->
+      <div class="details-grid">
+        <!-- Media Showcase Column -->
+        <div class="details-media-wrap">
+          <div class="details-media-main">
+            <img src="{{ item.get_image_url() }}" alt="{{ item.item_name }}" onerror="this.src='/static/images/headphones.svg'">
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; justify-content: space-between; align-items: center;">
+            <span style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted); background: var(--bg); padding: 0.35rem 0.65rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+              REPORT ID: #{{ item.id }}
+            </span>
+            <button id="copy-link-btn" class="btn btn-sm btn-outline" title="Copy shareable link">
+              <i class="fa-regular fa-copy"></i> Share Link
+            </button>
+          </div>
+        </div>
+
+        <!-- Details Content Column -->
+        <div class="details-content">
+          <div class="details-header-badges">
+            {% if item.report_type == 'lost' %}
+              <span class="badge badge-lost"><i class="fa-solid fa-circle-exclamation"></i> Lost</span>
+            {% else %}
+              <span class="badge badge-found"><i class="fa-solid fa-circle-check"></i> Found</span>
+            {% endif %}
+
+            {% if item.status == 'Returned' %}
+              <span class="badge badge-returned"><i class="fa-solid fa-check"></i> Returned</span>
+            {% elif item.status == 'Pending' %}
+              <span class="badge badge-pending"><i class="fa-solid fa-clock"></i> Pending</span>
+            {% else %}
+              <span class="badge badge-active"><i class="fa-solid fa-bolt"></i> Active</span>
+            {% endif %}
+
+            <span class="badge badge-category">
+              <i class="fa-solid fa-tag"></i> {{ item.category }}
+            </span>
+          </div>
+
+          <h1 class="details-title">{{ item.item_name }}</h1>
+
+          <!-- Key Meta Grid -->
+          <div class="details-meta-grid">
+            <div class="details-meta-item">
+              <span class="details-meta-label"><i class="fa-solid fa-location-dot" style="color: var(--secondary);"></i> Location</span>
+              <span class="details-meta-val">{{ item.location }}</span>
+            </div>
+            <div class="details-meta-item">
+              <span class="details-meta-label"><i class="fa-regular fa-calendar" style="color: var(--secondary);"></i> Date Reported</span>
+              <span class="details-meta-val">{{ item.report_date }}</span>
+            </div>
+          </div>
+
+          <!-- Description Block -->
+          <div class="details-description-block">
+            <h3 class="details-section-heading">Detailed Description</h3>
+            <p class="details-description-text">{{ item.description }}</p>
+          </div>
+
+          <!-- Reporter / Custodian Info Card -->
+          <div class="reporter-card">
+            <div class="reporter-info">
+              <div class="reporter-avatar">{{ item.contact[0]|upper }}</div>
+              <div>
+                <div class="reporter-name">{{ item.contact }}</div>
+                <div class="reporter-contact">Campus Community Member • Verified Reporter</div>
+              </div>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); text-align: right;">
+              {% if item.contact_phone %}
+                <div><i class="fa-solid fa-phone"></i> {{ item.contact_phone }}</div>
+              {% endif %}
+              <div style="font-size: 0.8rem; color: var(--text-light);">Direct Campus Inquiry</div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div style="display: flex; gap: 1rem; margin-top: auto; flex-wrap: wrap;">
+            <button id="open-contact-modal" class="btn btn-navy btn-lg" style="flex: 1;">
+              <i class="fa-solid fa-envelope"></i> Contact Reporter
+            </button>
+            <a href="{{ url_for('browse') }}" class="btn btn-outline btn-lg">
+              <i class="fa-solid fa-arrow-left"></i> Back to Browse
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Items in Same Category -->
+      {% if related_items %}
+        <section style="margin-top: 4.5rem;">
+          <div class="section-header" style="text-align: left; margin-bottom: 2rem;">
+            <span class="section-eyebrow">Recommendations</span>
+            <h2 class="section-title" style="font-size: 1.75rem;">Similar Campus Reports</h2>
+            <p class="section-subtitle">Other belongings reported in the {{ item.category }} category.</p>
+          </div>
+
+          <div class="items-grid">
+            {% for rel in related_items %}
+              <div class="item-card">
+                <div class="item-card-media">
+                  <img src="{{ rel.get_image_url() }}" alt="{{ rel.item_name }}" onerror="this.src='/static/images/headphones.svg'">
+                  <div class="item-badge-type">
+                    {% if rel.report_type == 'lost' %}
+                      <span class="badge badge-lost">Lost</span>
+                    {% else %}
+                      <span class="badge badge-found">Found</span>
+                    {% endif %}
+                  </div>
+                  <div class="item-badge-category">
+                    <span class="badge badge-category">{{ rel.category }}</span>
+                  </div>
+                </div>
+                <div class="item-card-body">
+                  <h3 class="item-card-title">{{ rel.item_name }}</h3>
+                  <p class="item-card-desc">{{ rel.description }}</p>
+                  <div class="item-card-meta">
+                    <div class="meta-row">
+                      <i class="fa-solid fa-location-dot"></i>
+                      <span>{{ rel.location }}</span>
+                    </div>
+                  </div>
+                  <div class="item-card-footer">
+                    <a href="{{ url_for('item_details', item_id=rel.id) }}" class="btn btn-outline btn-sm">
+                      View Details <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+    </div>
+  </main>
+
+  <!-- Interactive Contact Reporter Modal -->
+  <div id="contact-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fa-solid fa-paper-plane" style="color: var(--secondary);"></i> Send Message to Reporter
+        </h3>
+        <button class="modal-close" id="close-contact-modal" aria-label="Close dialog">&times;</button>
+      </div>
+      <form action="{{ url_for('contact_reporter') }}" method="POST">
+        <input type="hidden" name="item_id" value="{{ item.id }}">
+        <div class="modal-body">
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            Communicate safely regarding <strong style="color: var(--primary);">"{{ item.item_name }}"</strong>.
+          </p>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="sender_name" class="form-label">Your Name <span class="required">*</span></label>
+            <input type="text" id="sender_name" name="sender_name" value="{{ current_user.name if current_user else '' }}" class="form-control" placeholder="Your full name" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="sender_email" class="form-label">Your Campus Email <span class="required">*</span></label>
+            <input type="email" id="sender_email" name="sender_email" value="{{ current_user.email if current_user else '' }}" class="form-control" placeholder="yourname@campus.edu" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="sender_message" class="form-label">Inquiry or Verification Message <span class="required">*</span></label>
+            <textarea id="sender_message" name="message" class="form-control" rows="4" placeholder="Hello, I believe this is my item! I can provide proof of ownership..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancel-contact-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-paper-plane"></i> Send Inquiry
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border: none; padding: 0;">
+        <div>&copy; 2026 FindIt Campus Lost & Found System. Cloud Computing Mini-Project.</div>
+        <div><a href="{{ url_for('browse') }}">Browse All Items</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Copy link
+    const copyBtn = document.getElementById('copy-link-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(window.location.href);
+        alert('Item link copied to clipboard!');
+      });
+    }
+
+    // Contact modal
+    const contactModal = document.getElementById('contact-modal');
+    const openBtn = document.getElementById('open-contact-modal');
+    const closeBtn = document.getElementById('close-contact-modal');
+    const cancelBtn = document.getElementById('cancel-contact-modal');
+
+    if (openBtn && contactModal) {
+      openBtn.addEventListener('click', () => contactModal.classList.add('show'));
+    }
+    const hideModal = () => contactModal.classList.remove('show');
+    if (closeBtn) closeBtn.addEventListener('click', hideModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', hideModal);
+
+    setTimeout(() => {
+      const toasts = document.querySelectorAll('.toast');
+      toasts.forEach(toast => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      });
+    }, 4000);
+  </script>
+</body>
+</html>
