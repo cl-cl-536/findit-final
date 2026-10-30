@@ -47,3 +47,4 @@ env/
 *.key
 .aws/
 credentials
+.venv/
